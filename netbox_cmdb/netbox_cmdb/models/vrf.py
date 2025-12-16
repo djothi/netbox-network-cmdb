@@ -1,6 +1,7 @@
 # This file is a rework of netbox/ipam/models/vrfs.py
 # We prefer all CMDB models to be inside the netbox_cmdb plugin
 from django.db import models
+from django.urls import reverse
 from netbox.models import ChangeLoggedModel
 
 
@@ -21,6 +22,9 @@ class VRF(ChangeLoggedModel):
 
     def __str__(self):
         return f"{self.tenant}--{self.name}"
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_cmdb:vrf", args=[self.pk])
 
     class Meta:
         ordering = ["name"]

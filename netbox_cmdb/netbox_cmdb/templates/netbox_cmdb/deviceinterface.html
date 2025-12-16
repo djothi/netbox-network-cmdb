@@ -1,0 +1,51 @@
+{% extends 'generic/object.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Device Interface</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table">
+          <tr>
+            <td>Name</td>
+            <td>{{ object.name }}</td>
+          </tr>
+          <tr>
+            <td>Device</td>
+            <td>{{ object.device|linkify }}</td>
+          </tr>
+          <tr>
+            <td>Enabled</td>
+            <td>{{ object.enabled|yesno:"Yes,No" }}</td>
+          </tr>
+          <tr>
+            <td>State</td>
+            <td>{{ object.get_state_display }}</td>
+          </tr>
+          <tr>
+            <td>Monitoring State</td>
+            <td>{{ object.get_monitoring_state_display }}</td>
+          </tr>
+          <tr>
+            <td>Autonegotiation</td>
+            <td>{{ object.autonegotiation|yesno:"Yes,No" }}</td>
+          </tr>
+          <tr>
+            <td>Speed</td>
+            <td>{{ object.speed|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>FEC</td>
+            <td>{{ object.get_fec_display|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td>{{ object.description|default:"—" }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

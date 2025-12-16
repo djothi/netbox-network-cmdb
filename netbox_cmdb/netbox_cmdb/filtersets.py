@@ -5,8 +5,11 @@ from tenancy.filtersets import TenancyFilterSet
 from utilities.filters import MultiValueCharFilter
 
 from netbox_cmdb.models.bgp import ASN, BGPPeerGroup, BGPSession, DeviceBGPSession
+from netbox_cmdb.models.interface import DeviceInterface, Link, LogicalInterface
 from netbox_cmdb.models.route_policy import RoutePolicy
 from netbox_cmdb.models.snmp import SNMP
+from netbox_cmdb.models.vlan import VLAN
+from netbox_cmdb.models.vrf import VRF
 
 device_location_filterset = [
     "device__location__name",
@@ -237,3 +240,179 @@ class SNMPFilterSet(ChangeLoggedModelFilterSet):
         if not value.strip():
             return queryset
         return queryset.filter(Q(device__name__icontains=value)).distinct()
+
+
+class DeviceInterfaceFilterSet(ChangeLoggedModelFilterSet):
+    """Device Interface filterset."""
+
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
+
+    class Meta:
+        model = DeviceInterface
+        fields = [
+            "id",
+            "name",
+            "device__id",
+            "device__name",
+            "enabled",
+            "state",
+            "monitoring_state",
+            "autonegotiation",
+            "speed",
+            "fec",
+        ] + device_location_filterset
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(name__icontains=value)
+            | Q(device__name__icontains=value)
+            | Q(description__icontains=value)
+        ).distinct()
+
+
+class LogicalInterfaceFilterSet(ChangeLoggedModelFilterSet):
+    """Logical Interface filterset."""
+
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
+
+    class Meta:
+        model = LogicalInterface
+        fields = [
+            "id",
+            "index",
+            "parent_interface__id",
+            "parent_interface__name",
+            "parent_interface__device__name",
+            "enabled",
+            "state",
+            "monitoring_state",
+            "mtu",
+            "type",
+            "vrf__id",
+            "vrf__name",
+            "ipv4_address__id",
+            "ipv6_address__id",
+            "mode",
+            "untagged_vlan__id",
+            "native_vlan__id",
+        ]
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(parent_interface__name__icontains=value)
+            | Q(parent_interface__device__name__icontains=value)
+            | Q(description__icontains=value)
+        ).distinct()
+
+
+class VRFFilterSet(ChangeLoggedModelFilterSet, TenancyFilterSet):
+    """VRF filterset."""
+
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
+
+    class Meta:
+        model = VRF
+        fields = ["id", "name", "tenant"]
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(Q(name__icontains=value)).distinct()
+
+
+class VLANFilterSet(ChangeLoggedModelFilterSet, TenancyFilterSet):
+    """VLAN filterset."""
+
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
+
+    class Meta:
+        model = VLAN
+        fields = ["id", "vid", "name", "tenant"]
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(name__icontains=value) | Q(vid__icontains=value) | Q(description__icontains=value)
+        ).distinct()
+
+
+class LinkFilterSet(ChangeLoggedModelFilterSet):
+    """Link filterset."""
+
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
+
+    interface = MultiValueCharFilter(
+        method="filter_interface",
+        label="interface*",
+    )
+
+    device = MultiValueCharFilter(
+        method="filter_device",
+        label="device*",
+    )
+
+    class Meta:
+        model = Link
+        fields = [
+            "id",
+            "interface_a__id",
+            "interface_a__name",
+            "interface_a__device__name",
+            "interface_b__id",
+            "interface_b__name",
+            "interface_b__device__name",
+            "state",
+            "monitoring_state",
+        ]
+
+    def filter_interface(self, queryset, name, value):
+        if len(value) > 2:
+            # a link can't have more than 2 interfaces
+            return queryset.none()
+
+        for val in value:
+            queryset = queryset.filter(
+                Q(interface_a__name__icontains=val) | Q(interface_b__name__icontains=val)
+            )
+        return queryset
+
+    def filter_device(self, queryset, name, value):
+        if len(value) > 2:
+            # a link can't have more than 2 devices
+            return queryset.none()
+
+        for val in value:
+            queryset = queryset.filter(
+                Q(interface_a__device__name=val) | Q(interface_b__device__name=val)
+            )
+        return queryset
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(interface_a__name__icontains=value)
+            | Q(interface_a__device__name__icontains=value)
+            | Q(interface_b__name__icontains=value)
+            | Q(interface_b__device__name__icontains=value)
+        ).distinct()

@@ -1,0 +1,96 @@
+{% extends 'generic/object.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Logical Interface</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table">
+          <tr>
+            <td>Parent Interface</td>
+            <td>{{ object.parent_interface|linkify }}</td>
+          </tr>
+          <tr>
+            <td>Index</td>
+            <td>{{ object.index }}</td>
+          </tr>
+          <tr>
+            <td>Enabled</td>
+            <td>{{ object.enabled|yesno:"Yes,No" }}</td>
+          </tr>
+          <tr>
+            <td>State</td>
+            <td>{{ object.get_state_display }}</td>
+          </tr>
+          <tr>
+            <td>Monitoring State</td>
+            <td>{{ object.get_monitoring_state_display }}</td>
+          </tr>
+          <tr>
+            <td>Type</td>
+            <td>{{ object.get_type_display|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>VRF</td>
+            <td>{{ object.vrf|linkify|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>IPv4 Address</td>
+            <td>{{ object.ipv4_address|linkify|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>IPv6 Address</td>
+            <td>{{ object.ipv6_address|linkify|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>Mode</td>
+            <td>{{ object.get_mode_display|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>MTU</td>
+            <td>{{ object.mtu|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>Untagged VLAN</td>
+            <td>{{ object.untagged_vlan|linkify|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>Native VLAN</td>
+            <td>{{ object.native_vlan|linkify|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td>{{ object.description|default:"—" }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% if object.tagged_vlans.exists %}
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Tagged VLANs</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table">
+          <thead>
+            <tr>
+              <th>VID</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vlan in object.tagged_vlans.all %}
+            <tr>
+              <td><a href="{% url 'plugins:netbox_cmdb:vlan' pk=vlan.pk %}">{{ vlan.vid }}</a></td>
+              <td>{{ vlan.name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

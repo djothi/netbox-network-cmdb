@@ -21,8 +21,13 @@ from netbox_cmdb.filtersets import (
     BGPPeerGroupFilterSet,
     BGPSessionFilterSet,
     DeviceBGPSessionFilterSet,
+    DeviceInterfaceFilterSet,
+    LinkFilterSet,
+    LogicalInterfaceFilterSet,
     RoutePolicyFilterSet,
     SNMPFilterSet,
+    VLANFilterSet,
+    VRFFilterSet,
 )
 from netbox_cmdb.forms import (
     ASNForm,
@@ -30,10 +35,15 @@ from netbox_cmdb.forms import (
     BGPSessionFilterSetForm,
     BGPSessionForm,
     DeviceBGPSessionForm,
+    DeviceInterfaceForm,
+    LinkForm,
+    LogicalInterfaceForm,
     RoutePolicyFilterSetForm,
     RoutePolicyForm,
     SNMPCommunityGroupForm,
     SNMPGroupForm,
+    VLANForm,
+    VRFForm,
 )
 from netbox_cmdb.helpers import cleaning
 from netbox_cmdb.models.bgp import (
@@ -43,16 +53,24 @@ from netbox_cmdb.models.bgp import (
     BGPSession,
     DeviceBGPSession,
 )
+from netbox_cmdb.models.interface import DeviceInterface, Link, LogicalInterface
 from netbox_cmdb.models.route_policy import RoutePolicy
 from netbox_cmdb.models.snmp import SNMP, SNMPCommunity
+from netbox_cmdb.models.vlan import VLAN
+from netbox_cmdb.models.vrf import VRF
 from netbox_cmdb.tables import (
     ASNTable,
     BGPPeerGroupTable,
     BGPSessionTable,
     DeviceBGPSessionTable,
+    DeviceInterfaceTable,
+    LinkTable,
+    LogicalInterfaceTable,
     RoutePolicyTable,
     SNMPCommunityTable,
     SNMPTable,
+    VLANTable,
+    VRFTable,
 )
 
 
@@ -400,3 +418,116 @@ class SNMPCommunityEditView(ObjectEditView):
 
 class SNMPCommunityDeleteView(ObjectDeleteView):
     queryset = SNMPCommunity.objects.all()
+
+
+## Device Interface views
+class DeviceInterfaceListView(ObjectListView):
+    queryset = DeviceInterface.objects.all()
+    filterset = DeviceInterfaceFilterSet
+    table = DeviceInterfaceTable
+    template_name = "netbox_cmdb/deviceinterface_list.html"
+
+
+class DeviceInterfaceEditView(ObjectEditView):
+    queryset = DeviceInterface.objects.all()
+    form = DeviceInterfaceForm
+
+
+class DeviceInterfaceDeleteView(ObjectDeleteView):
+    queryset = DeviceInterface.objects.all()
+
+
+class DeviceInterfaceView(ObjectView):
+    queryset = DeviceInterface.objects.all()
+    template_name = "netbox_cmdb/deviceinterface.html"
+
+
+## Logical Interface views
+class LogicalInterfaceListView(ObjectListView):
+    queryset = LogicalInterface.objects.all()
+    filterset = LogicalInterfaceFilterSet
+    table = LogicalInterfaceTable
+    template_name = "netbox_cmdb/logicalinterface_list.html"
+
+
+class LogicalInterfaceEditView(ObjectEditView):
+    queryset = LogicalInterface.objects.all()
+    form = LogicalInterfaceForm
+
+
+class LogicalInterfaceDeleteView(ObjectDeleteView):
+    queryset = LogicalInterface.objects.all()
+
+
+class LogicalInterfaceView(ObjectView):
+    queryset = LogicalInterface.objects.all()
+    template_name = "netbox_cmdb/logicalinterface.html"
+
+
+## VRF views
+class VRFListView(ObjectListView):
+    queryset = VRF.objects.all()
+    filterset = VRFFilterSet
+    table = VRFTable
+    template_name = "netbox_cmdb/vrf_list.html"
+
+
+class VRFEditView(ObjectEditView):
+    queryset = VRF.objects.all()
+    form = VRFForm
+
+
+class VRFDeleteView(ObjectDeleteView):
+    queryset = VRF.objects.all()
+
+
+class VRFView(ObjectView):
+    queryset = VRF.objects.all()
+    template_name = "netbox_cmdb/vrf.html"
+
+
+## VLAN views
+class VLANListView(ObjectListView):
+    queryset = VLAN.objects.all()
+    filterset = VLANFilterSet
+    table = VLANTable
+    template_name = "netbox_cmdb/vlan_list.html"
+
+
+class VLANEditView(ObjectEditView):
+    queryset = VLAN.objects.all()
+    form = VLANForm
+
+
+class VLANDeleteView(ObjectDeleteView):
+    queryset = VLAN.objects.all()
+
+
+class VLANView(ObjectView):
+    queryset = VLAN.objects.all()
+    template_name = "netbox_cmdb/vlan.html"
+
+
+## Link views
+class LinkListView(ObjectListView):
+    queryset = Link.objects.prefetch_related("interface_a", "interface_b").all()
+    filterset = LinkFilterSet
+    table = LinkTable
+    template_name = "netbox_cmdb/link_list.html"
+
+
+class LinkEditView(ObjectEditView):
+    queryset = Link.objects.all()
+    form = LinkForm
+
+
+class LinkDeleteView(ObjectDeleteView):
+    queryset = Link.objects.all()
+
+
+class LinkView(ObjectView):
+    queryset = Link.objects.prefetch_related(
+        "interface_a", "interface_a__device",
+        "interface_b", "interface_b__device"
+    ).all()
+    template_name = "netbox_cmdb/link.html"

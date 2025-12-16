@@ -1,0 +1,31 @@
+{% extends 'generic/object.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">VLAN</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table">
+          <tr>
+            <td>VID</td>
+            <td>{{ object.vid }}</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>{{ object.name }}</td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td>{{ object.description|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td>Tenant</td>
+            <td>{{ object.tenant|linkify|default:"—" }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

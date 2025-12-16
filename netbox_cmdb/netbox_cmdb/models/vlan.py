@@ -2,6 +2,7 @@
 # We want all CMDB models to be inside the netbox_cmdb plugin
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from netbox.models import ChangeLoggedModel
 
 # 12-bit VLAN ID (values 0 and 4095 are reserved)
@@ -28,6 +29,9 @@ class VLAN(ChangeLoggedModel):
 
     def __str__(self):
         return f"{self.vid}--{self.name}"
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_cmdb:vlan", args=[self.pk])
 
     class Meta:
         ordering = ["vid"]

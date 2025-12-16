@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from netbox.models import ChangeLoggedModel
 
 from netbox_cmdb import protect
@@ -64,6 +65,9 @@ class DeviceInterface(ChangeLoggedModel):
 
     def __str__(self):
         return f"{self.device.name}--{self.name}"
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_cmdb:deviceinterface", args=[self.pk])
 
     class Meta:
         unique_together = ("device", "name")
@@ -145,6 +149,9 @@ class LogicalInterface(ChangeLoggedModel):
     def __str__(self):
         return f"{self.parent_interface.name}--{self.index}"
 
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_cmdb:logicalinterface", args=[self.pk])
+
     def clean(self):
         # List of checks to perform
         if self.untagged_vlan and (self.tagged_vlans.exists() or self.native_vlan):
@@ -190,6 +197,9 @@ class Link(ChangeLoggedModel):
 
     def __str__(self):
         return f"{self.interface_a} <--> {self.interface_b}"
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_cmdb:link", args=[self.pk])
 
 
 class PortLayout(ChangeLoggedModel):

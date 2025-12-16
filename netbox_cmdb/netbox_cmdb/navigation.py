@@ -76,4 +76,64 @@ menu_items = (
             ),
         ),
     ),
+    PluginMenuItem(
+        link="plugins:netbox_cmdb:deviceinterface_list",
+        link_text="Device Interfaces",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_cmdb:deviceinterface_add",
+                title="Device Interfaces",
+                icon_class="mdi mdi-plus-thick",
+                color=ButtonColorChoices.GREEN,
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_cmdb:logicalinterface_list",
+        link_text="Logical Interfaces",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_cmdb:logicalinterface_add",
+                title="Logical Interfaces",
+                icon_class="mdi mdi-plus-thick",
+                color=ButtonColorChoices.GREEN,
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_cmdb:vrf_list",
+        link_text="VRFs",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_cmdb:vrf_add",
+                title="VRFs",
+                icon_class="mdi mdi-plus-thick",
+                color=ButtonColorChoices.GREEN,
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_cmdb:vlan_list",
+        link_text="VLANs",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_cmdb:vlan_add",
+                title="VLANs",
+                icon_class="mdi mdi-plus-thick",
+                color=ButtonColorChoices.GREEN,
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_cmdb:link_list",
+        link_text="Links",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_cmdb:link_add",
+                title="Links",
+                icon_class="mdi mdi-plus-thick",
+                color=ButtonColorChoices.GREEN,
+            ),
+        ),
+    ),
 )
